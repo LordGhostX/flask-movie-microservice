@@ -11,7 +11,7 @@ def add_movie():
     year_of_release = request.form.get("year_of_release")
 
     # check required args
-    if any([name, poster]) is None:
+    if None in [name, poster]:
         return jsonify({
             "msg": "name and poster are required arguments",
             "data": {}
@@ -41,3 +41,34 @@ def add_movie():
         "msg": "successfully added new movie",
         "data": {}
     }), 201
+
+
+@app.route("/movie/", methods=["GET"])
+def get_movie():
+    movieID = request.args.get("id")
+
+    # check required args
+    if movieID is None:
+        return jsonify({
+            "msg": "movie ID is a required argument",
+            "data": {}
+        }), 400
+
+    # check if the movie exists
+    movie = Movie.query.get(movieID)
+    if movie is None:
+        return jsonify({
+            "msg": "the requested movie does not exist",
+            "data": {}
+        }), 404
+
+    return jsonify({
+        "msg": "successfully fetched movie details",
+        "data": {
+            "name": movie.name,
+            "poster": movie.poster,
+            "synopsis": movie.synopsis,
+            "year_of_release": movie.year_of_release,
+            "date_created": movie.date_created
+        }
+    })
