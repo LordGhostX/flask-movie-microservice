@@ -9,5 +9,7 @@ class Movie(db.Model):
     poster = db.Column(db.String, nullable=False)
     synopsis = db.Column(db.String, nullable=True)
     year_of_release = db.Column(db.Integer, nullable=True)
+    last_updated = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
     date_created = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow)
