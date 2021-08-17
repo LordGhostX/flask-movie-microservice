@@ -1,6 +1,31 @@
+from functools import wraps
 from flask import request, jsonify
 from movie import app, db
 from movie.models import Movie
+
+
+def requested_movie_exists(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        movieID = request.args.get("id")
+
+        # check required args
+        if movieID is None:
+            return jsonify({
+                "msg": "movie ID is a required argument",
+                "data": {}
+            }), 400
+
+        # check if the movie exists
+        movie = Movie.query.get(movieID)
+        if movie is None:
+            return jsonify({
+                "msg": "the requested movie does not exist",
+                "data": {}
+            }), 404
+
+        return f(movie, *args, **kwargs)
+    return decorated
 
 
 @app.route("/movie/", methods=["POST"])
@@ -21,9 +46,11 @@ def add_movie():
     if year_of_release:
         try:
             year_of_release = int(year_of_release)
+            if year_of_release <= 0:
+                raise ValueError
         except ValueError:
             return jsonify({
-                "msg": "year_of_release must be a valid integer",
+                "msg": "year_of_release must be a valid positive integer",
                 "data": {}
             }), 400
 
@@ -44,27 +71,12 @@ def add_movie():
 
 
 @app.route("/movie/", methods=["GET"])
-def get_movie():
-    movieID = request.args.get("id")
-
-    # check required args
-    if movieID is None:
-        return jsonify({
-            "msg": "movie ID is a required argument",
-            "data": {}
-        }), 400
-
-    # check if the movie exists
-    movie = Movie.query.get(movieID)
-    if movie is None:
-        return jsonify({
-            "msg": "the requested movie does not exist",
-            "data": {}
-        }), 404
-
+@requested_movie_exists
+def get_movie(movie):
     return jsonify({
         "msg": "successfully fetched movie details",
         "data": {
+            "id": movie.id,
             "name": movie.name,
             "poster": movie.poster,
             "synopsis": movie.synopsis,
