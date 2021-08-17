@@ -9,17 +9,17 @@ from movie.utils import validate_year
 def requested_movie_exists(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        movieID = request.args.get("id")
+        movie_id = request.args.get("id")
 
         # check required args
-        if movieID is None:
+        if movie_id is None:
             return jsonify({
                 "msg": "movie ID is a required argument",
                 "data": {}
             }), 400
 
         # check if the movie exists
-        movie = Movie.query.get(movieID)
+        movie = Movie.query.get(movie_id)
         if movie is None:
             return jsonify({
                 "msg": "the requested movie does not exist",
