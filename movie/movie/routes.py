@@ -83,4 +83,16 @@ def get_movie(movie):
             "year_of_release": movie.year_of_release,
             "date_created": movie.date_created
         }
-    })
+    }), 200
+
+
+@app.route("/movie/", methods=["DELETE"])
+@requested_movie_exists
+def delete_movie(movie):
+    db.session.delete(movie)
+    db.session.commit()
+
+    return jsonify({
+        "msg": "successfully deleted movie details",
+        "data": {}
+    }), 200
