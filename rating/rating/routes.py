@@ -45,6 +45,7 @@ def add_rating():
 def get_rating():
     movie_id = request.form.get("id")
 
+    # check required args
     if movie_id is None:
         return jsonify({
             "msg": "movie ID is a required argument",
