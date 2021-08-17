@@ -39,3 +39,23 @@ def add_rating():
         "msg": "successfully added movie rating",
         "data": {}
     }), 201
+
+
+@app.route("/rating/", methods=["GET"])
+def get_rating():
+    movie_id = request.form.get("id")
+
+    if movie_id is None:
+        return jsonify({
+            "msg": "movie ID is a required argument",
+            "data": {}
+        }), 400
+
+    movie_rating = db.engine.execute(
+        "SELECT AVG(rating_value) FROM movies WHERE movie_id=?", movie_id).fetchone()
+    return jsonify({
+        "msg": "successfully fetched movie rating",
+        "data": {
+            "rating_value": movie_rating[0]
+        }
+    })

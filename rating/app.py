@@ -1,6 +1,6 @@
 from rating import app, db
 from rating.models import Rating
-from rating.routes import add_rating
+from rating.routes import add_rating, get_rating
 
 db.create_all()
 
