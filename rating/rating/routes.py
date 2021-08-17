@@ -52,7 +52,7 @@ def get_rating():
         }), 400
 
     movie_rating = db.engine.execute(
-        "SELECT AVG(rating_value) FROM movies WHERE movie_id=?", movie_id).fetchone()
+        "SELECT AVG(rating_value) FROM rating WHERE movie_id=?", movie_id).fetchone()
     return jsonify({
         "msg": "successfully fetched movie rating",
         "data": {
